@@ -20,7 +20,7 @@ package edu.princeton.cs.algs4;
  *  when associating a value with a key that is already in the symbol table,
  *  the convention is to replace the old value with the new value.
  *  Unlike {@link java.util.Map}, this class uses the convention that
- *  values cannot be {@code null}&mdash;setting the
+ *  values cannot be {@code null}—setting the
  *  value associated with a key to {@code null} is equivalent to deleting the key
  *  from the symbol table.
  *  <p>
@@ -110,10 +110,10 @@ public class SeparateChainingHashST<Key, Value> {
      * @param  key the key
      * @return {@code true} if this symbol table contains {@code key};
      *         {@code false} otherwise
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public boolean contains(Key key) {
-        if (key == null) throw new NullPointerException("argument to contains() is null");
+        if (key == null) throw new IllegalArgumentException("argument to contains() is null");
         return get(key) != null;
     } 
 
@@ -123,10 +123,10 @@ public class SeparateChainingHashST<Key, Value> {
      * @param  key the key
      * @return the value associated with {@code key} in the symbol table;
      *         {@code null} if no such value
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public Value get(Key key) {
-        if (key == null) throw new NullPointerException("argument to get() is null");
+        if (key == null) throw new IllegalArgumentException("argument to get() is null");
         int i = hash(key);
         return st[i].get(key);
     } 
@@ -139,10 +139,10 @@ public class SeparateChainingHashST<Key, Value> {
      *
      * @param  key the key
      * @param  val the value
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void put(Key key, Value val) {
-        if (key == null) throw new NullPointerException("first argument to put() is null");
+        if (key == null) throw new IllegalArgumentException("first argument to put() is null");
         if (val == null) {
             delete(key);
             return;
@@ -161,10 +161,10 @@ public class SeparateChainingHashST<Key, Value> {
      * (if the key is in this symbol table).    
      *
      * @param  key the key
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void delete(Key key) {
-        if (key == null) throw new NullPointerException("argument to delete() is null");
+        if (key == null) throw new IllegalArgumentException("argument to delete() is null");
 
         int i = hash(key);
         if (st[i].contains(key)) n--;

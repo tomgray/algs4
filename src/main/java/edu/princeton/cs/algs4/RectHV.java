@@ -12,7 +12,7 @@ package edu.princeton.cs.algs4;
 /**
  *  The {@code RectHV} class is an immutable data type to encapsulate a
  *  two-dimensional axis-aligned rectagle with real-value coordinates.
- *  The rectangle is <em>closed</em>&mdash;it includes the points on the boundary.
+ *  The rectangle is <em>closed</em>—it includes the points on the boundary.
  *  <p>
  *  For additional documentation, 
  *  see <a href="http://algs4.cs.princeton.edu/12oop">Section 1.2</a> of 
@@ -108,11 +108,14 @@ public final class RectHV {
     }
 
     /**
-     * Returns true if the two rectangles intersect.
+     * Returns true if the two rectangles intersect. This includes
+     * <em>improper intersections</em> (at points on the boundary
+     * of each rectangle) and <em>nested intersctions</em>
+     * (when one rectangle is contained inside the other)
      *
      * @param  that the other rectangle
      * @return {@code true} if this rectangle intersect the argument
-               rectagnle at one or more points, including on the boundary
+               rectangle at one or more points
      */
     public boolean intersects(RectHV that) {
         return this.xmax >= that.xmin && this.ymax >= that.ymin

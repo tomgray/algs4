@@ -31,6 +31,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.MediaTracker;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 
@@ -55,12 +56,12 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.LinkedList;
 import java.util.TreeSet;
 import java.util.NoSuchElementException;
-
 import javax.imageio.ImageIO;
 
 import javax.swing.ImageIcon;
@@ -102,7 +103,7 @@ import javax.swing.KeyStroke;
  *  If you compile and execute the program, you should see a window
  *  appear with a thick magenta line and a blue point.
  *  This program illustrates the two main types of methods in standard
- *  drawing&mdash;methods that draw geometric shapes and methods that
+ *  drawing—methods that draw geometric shapes and methods that
  *  control drawing parameters.
  *  The methods {@code StdDraw.line()} and {@code StdDraw.point()}
  *  draw lines and points; the methods {@code StdDraw.setPenRadius()}
@@ -284,15 +285,15 @@ import javax.swing.KeyStroke;
  *  <ul>
  *  <li> {@link #picture(double x, double y, String filename)}
  *  <li> {@link #picture(double x, double y, String filename, double degrees)}
- *  <li> {@link #picture(double x, double y, String filename, double width)}
- *  <li> {@link #picture(double x, double y, String filename, double width, double degrees)}
+ *  <li> {@link #picture(double x, double y, String filename, double scaledWidth, double scaledHeight)}
+ *  <li> {@link #picture(double x, double y, String filename, double scaledWidth, double scaledHeight, double degrees)}
  *  </ul>
  *  <p>
  *  These methods draw the specified image, centered at (<em>x</em>, <em>y</em>).
  *  The supported image formats are JPEG, PNG, and GIF.
  *  The image will display at its native size, independent of the coordinate system.
  *  Optionally, you can rotate the image a specified number of degrees counterclockwise
- *  or rescale it to fit inside a width-by-height pixel bounding box.
+ *  or rescale it to fit snugly inside a width-by-height bounding box.
  *  <p>
  *  <b>Saving to a file.</b>
  *  You save your image to a file using the <em>File → Save</em> menu option.
@@ -331,7 +332,7 @@ import javax.swing.KeyStroke;
  *  <p>
  *  By default, double buffering is disabled, which means that as soon as you
  *  call a drawing
- *  method&mdash;such as {@code point()} or {@code line()}&mdash;the
+ *  method—such as {@code point()} or {@code line()}—the
  *  results appear on the screen.
  *  <p>
  *  When double buffering is enabled by calling {@link #enableDoubleBuffering()},
@@ -354,7 +355,7 @@ import javax.swing.KeyStroke;
  *  <li> Wait for a short while.
  *  </ul>
  *  <p>
- *  The {@link #clear()}, {@link #show()}, and {@link #pause(int dt)} methods
+ *  The {@link #clear()}, {@link #show()}, and {@link #pause(int t)} methods
  *  support the first, third, and fourth of these steps, respectively.
  *  <p>
  *  For example, this code fragment animates two balls moving in a circle.
@@ -418,10 +419,10 @@ import javax.swing.KeyStroke;
  *  To avoid clutter, the API doesn't explicitly refer to arguments that are
  *  null, infinity, or NaN.
  *  <ul>
- *  <li> Any method that is passed a {@code null} argument will throw a
- *       {@link NullPointerException}.
+ *  <li> Any method that is passed a {@code null} argument will throw an
+ *       {@link IllegalArgumentException}.
  *  <li> Except as noted in the APIs, drawing an object outside (or partly outside)
- *       the canvas is permitted&mdash;however, only the part of the object that
+ *       the canvas is permitted—however, only the part of the object that
  *       appears inside the canvas will be visible.
  *  <li> Except as noted in the APIs, all methods accept {@link Double#NaN},
  *       {@link Double#POSITIVE_INFINITY}, and {@link Double#NEGATIVE_INFINITY}
@@ -460,7 +461,7 @@ import javax.swing.KeyStroke;
  *  <b>Reference.</b>
  *  For additional documentation,
  *  see <a href="http://introcs.cs.princeton.edu/15inout">Section 1.5</a> of
- *  <em>Introduction to Programming in Java: An Interdisciplinary Approach</em>
+ *  <em>Computer Science: An Interdisciplinary Approach</em>
  *  by Robert Sedgewick and Kevin Wayne.
  *
  *  @author Robert Sedgewick
@@ -645,8 +646,8 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      *
      * @param  canvasWidth the width as a number of pixels
      * @param  canvasHeight the height as a number of pixels
-     * @throws IllegalArgumentException unless both {@code width} and
-     *         {@code height} are positive
+     * @throws IllegalArgumentException unless both {@code canvasWidth} and
+     *         {@code canvasHeight} are positive
      */
     public static void setCanvasSize(int canvasWidth, int canvasHeight) {
         if (canvasWidth <= 0 || canvasHeight <= 0)
@@ -883,7 +884,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * @param color the color to make the pen
      */
     public static void setPenColor(Color color) {
-        if (color == null) throw new NullPointerException();
+        if (color == null) throw new IllegalArgumentException();
         penColor = color;
         offscreen.setColor(penColor);
     }
@@ -926,7 +927,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * @param font the font
      */
     public static void setFont(Font font) {
-        if (font == null) throw new NullPointerException();
+        if (font == null) throw new IllegalArgumentException();
         StdDraw.font = font;
     }
 
@@ -1180,7 +1181,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * Draws a polygon with the vertices 
      * (<em>x</em><sub>0</sub>, <em>y</em><sub>0</sub>),
      * (<em>x</em><sub>1</sub>, <em>y</em><sub>1</sub>), ...,
-     * (<em>x</em><sub><em>n</em>&minus;1</sub>, <em>y</em><sub><em>n</em>&minus;1</sub>).
+     * (<em>x</em><sub><em>n</em>–1</sub>, <em>y</em><sub><em>n</em>–1</sub>).
      *
      * @param  x an array of all the <em>x</em>-coordinates of the polygon
      * @param  y an array of all the <em>y</em>-coordinates of the polygon
@@ -1188,8 +1189,8 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      *         are of the same length
      */
     public static void polygon(double[] x, double[] y) {
-        if (x == null) throw new NullPointerException();
-        if (y == null) throw new NullPointerException();
+        if (x == null) throw new IllegalArgumentException();
+        if (y == null) throw new IllegalArgumentException();
         int n1 = x.length;
         int n2 = y.length;
         if (n1 != n2) throw new IllegalArgumentException("arrays must be of the same length");
@@ -1207,7 +1208,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * Draws a polygon with the vertices 
      * (<em>x</em><sub>0</sub>, <em>y</em><sub>0</sub>),
      * (<em>x</em><sub>1</sub>, <em>y</em><sub>1</sub>), ...,
-     * (<em>x</em><sub><em>n</em>&minus;1</sub>, <em>y</em><sub><em>n</em>&minus;1</sub>).
+     * (<em>x</em><sub><em>n</em>–1</sub>, <em>y</em><sub><em>n</em>–1</sub>).
      *
      * @param  x an array of all the <em>x</em>-coordinates of the polygon
      * @param  y an array of all the <em>y</em>-coordinates of the polygon
@@ -1215,8 +1216,8 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      *         are of the same length
      */
     public static void filledPolygon(double[] x, double[] y) {
-        if (x == null) throw new NullPointerException();
-        if (y == null) throw new NullPointerException();
+        if (x == null) throw new IllegalArgumentException();
+        if (y == null) throw new IllegalArgumentException();
         int n1 = x.length;
         int n2 = y.length;
         if (n1 != n2) throw new IllegalArgumentException("arrays must be of the same length");
@@ -1234,10 +1235,51 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
    /***************************************************************************
     *  Drawing images.
     ***************************************************************************/
+    // get an image from the given filename
+    private static Image getImage(String filename) {
+        if (filename == null) throw new IllegalArgumentException();
 
-    // [Summer 2016] updated to use ImageIO instead of ImageIcon()
+        // to read from file
+        ImageIcon icon = new ImageIcon(filename);
+
+        // try to read from URL
+        if ((icon == null) || (icon.getImageLoadStatus() != MediaTracker.COMPLETE)) {
+            try {
+                URL url = new URL(filename);
+                icon = new ImageIcon(url);
+            }
+            catch (MalformedURLException e) {
+                /* not a url */
+            }
+        }
+
+        // in case file is inside a .jar (classpath relative to StdDraw)
+        if ((icon == null) || (icon.getImageLoadStatus() != MediaTracker.COMPLETE)) {
+            URL url = StdDraw.class.getResource(filename);
+            if (url != null)
+                icon = new ImageIcon(url);
+        }
+
+        // in case file is inside a .jar (classpath relative to root of jar)
+        if ((icon == null) || (icon.getImageLoadStatus() != MediaTracker.COMPLETE)) {
+            URL url = StdDraw.class.getResource("/" + filename);
+            if (url == null) throw new IllegalArgumentException("image " + filename + " not found");
+            icon = new ImageIcon(url);
+        }
+
+        return icon.getImage();
+    }
+
+   /***************************************************************************
+    * [Summer 2016] Should we update to use ImageIO instead of ImageIcon()?
+    *               Seems to have some issues loading images on some systems
+    *               and slows things down on other systems.
+    *               especially if you don't call ImageIO.setUseCache(false)
+    *               One advantage is that it returns a BufferedImage.
+    ***************************************************************************/
+/*
     private static BufferedImage getImage(String filename) {
-        if (filename == null) throw new NullPointerException();
+        if (filename == null) throw new IllegalArgumentException();
 
         // from a file or URL
         try {
@@ -1270,7 +1312,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         }
         throw new IllegalArgumentException("image " + filename + " not found");
     }
-
+*/
     /**
      * Draws the specified image centered at (<em>x</em>, <em>y</em>).
      * The supported image formats are JPEG, PNG, and GIF.
@@ -1285,11 +1327,14 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * @throws IllegalArgumentException if the image filename is invalid
      */
     public static void picture(double x, double y, String filename) {
-        BufferedImage image = getImage(filename);
+        // BufferedImage image = getImage(filename);
+        Image image = getImage(filename);
         double xs = scaleX(x);
         double ys = scaleY(y);
-        int ws = image.getWidth();
-        int hs = image.getHeight();
+        // int ws = image.getWidth();    // can call only if image is a BufferedImage
+        // int hs = image.getHeight();
+        int ws = image.getWidth(null);
+        int hs = image.getHeight(null);
         if (ws < 0 || hs < 0) throw new IllegalArgumentException("image " + filename + " is corrupt");
 
         offscreen.drawImage(image, (int) Math.round(xs - ws/2.0), (int) Math.round(ys - hs/2.0), null);
@@ -1308,11 +1353,14 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * @throws IllegalArgumentException if the image filename is invalid
      */
     public static void picture(double x, double y, String filename, double degrees) {
-        BufferedImage image = getImage(filename);
+        // BufferedImage image = getImage(filename);
+        Image image = getImage(filename);
         double xs = scaleX(x);
         double ys = scaleY(y);
-        int ws = image.getWidth();
-        int hs = image.getHeight();
+        // int ws = image.getWidth();    // can call only if image is a BufferedImage
+        // int hs = image.getHeight();
+        int ws = image.getWidth(null);
+        int hs = image.getHeight(null);
         if (ws < 0 || hs < 0) throw new IllegalArgumentException("image " + filename + " is corrupt");
 
         offscreen.rotate(Math.toRadians(-degrees), xs, ys);
@@ -1330,15 +1378,15 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * @param  x the center <em>x</em>-coordinate of the image
      * @param  y the center <em>y</em>-coordinate of the image
      * @param  filename the name of the image/picture, e.g., "ball.gif"
-     * @param  scaledWidth the width of the scaled image in pixels
-     * @param  scaledHeight the height of the scaled image in pixels
+     * @param  scaledWidth the width of the scaled image (in screen coordinates)
+     * @param  scaledHeight the height of the scaled image (in screen coordinates)
      * @throws IllegalArgumentException if either {@code scaledWidth}
      *         or {@code scaledHeight} is negative
      * @throws IllegalArgumentException if the image filename is invalid
      */
     public static void picture(double x, double y, String filename, double scaledWidth, double scaledHeight) {
         Image image = getImage(filename);
-        if (scaledWidth < 0) throw new IllegalArgumentException("width is negative: " + scaledWidth);
+        if (scaledWidth  < 0) throw new IllegalArgumentException("width  is negative: " + scaledWidth);
         if (scaledHeight < 0) throw new IllegalArgumentException("height is negative: " + scaledHeight);
         double xs = scaleX(x);
         double ys = scaleY(y);
@@ -1364,8 +1412,8 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * @param  x the center <em>x</em>-coordinate of the image
      * @param  y the center <em>y</em>-coordinate of the image
      * @param  filename the name of the image/picture, e.g., "ball.gif"
-     * @param  scaledWidth the width of the scaled image in pixels
-     * @param  scaledHeight the height of the scaled image in pixels
+     * @param  scaledWidth the width of the scaled image (in screen coordinates)
+     * @param  scaledHeight the height of the scaled image (in screen coordinates)
      * @param  degrees is the number of degrees to rotate counterclockwise
      * @throws IllegalArgumentException if either {@code scaledWidth}
      *         or {@code scaledHeight} is negative
@@ -1404,7 +1452,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * @param  text the text to write
      */
     public static void text(double x, double y, String text) {
-        if (text == null) throw new NullPointerException();
+        if (text == null) throw new IllegalArgumentException();
         offscreen.setFont(font);
         FontMetrics metrics = offscreen.getFontMetrics();
         double xs = scaleX(x);
@@ -1424,7 +1472,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * @param  degrees is the number of degrees to rotate counterclockwise
      */
     public static void text(double x, double y, String text, double degrees) {
-        if (text == null) throw new NullPointerException();
+        if (text == null) throw new IllegalArgumentException();
         double xs = scaleX(x);
         double ys = scaleY(y);
         offscreen.rotate(Math.toRadians(-degrees), xs, ys);
@@ -1440,7 +1488,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * @param  text the text
      */
     public static void textLeft(double x, double y, String text) {
-        if (text == null) throw new NullPointerException();
+        if (text == null) throw new IllegalArgumentException();
         offscreen.setFont(font);
         FontMetrics metrics = offscreen.getFontMetrics();
         double xs = scaleX(x);
@@ -1458,7 +1506,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * @param  text the text to write
      */
     public static void textRight(double x, double y, String text) {
-        if (text == null) throw new NullPointerException();
+        if (text == null) throw new IllegalArgumentException();
         offscreen.setFont(font);
         FontMetrics metrics = offscreen.getFontMetrics();
         double xs = scaleX(x);
@@ -1475,7 +1523,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * Copies the offscreen buffer to the onscreen buffer, pauses for t milliseconds
      * and enables double buffering.
      * @param t number of milliseconds
-     * @deprecated replaced by {@link #enableDoubleBuffering}, {@link #show()}, and {@link #pause}
+     * @deprecated replaced by {@link #enableDoubleBuffering()}, {@link #show()}, and {@link #pause(int t)}
      */
     @Deprecated
     public static void show(int t) {
@@ -1566,12 +1614,12 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * @param  filename the name of the file with one of the required suffixes
      */
     public static void save(String filename) {
-        if (filename == null) throw new NullPointerException();
+        if (filename == null) throw new IllegalArgumentException();
         File file = new File(filename);
         String suffix = filename.substring(filename.lastIndexOf('.') + 1);
 
         // png files
-        if (suffix.toLowerCase().equals("png")) {
+        if ("png".equalsIgnoreCase(suffix)) {
             try {
                 ImageIO.write(onscreenImage, suffix, file);
             }
@@ -1582,7 +1630,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 
         // need to change from ARGB to RGB for JPEG
         // reference: http://archives.java.sun.com/cgi-bin/wa?A2=ind0404&L=java2d-interest&D=0&P=2727
-        else if (suffix.toLowerCase().equals("jpg")) {
+        else if ("jpg".equalsIgnoreCase(suffix)) {
             WritableRaster raster = onscreenImage.getRaster();
             WritableRaster newRaster;
             newRaster = raster.createWritableChild(0, 0, width, height, 0, 0, new int[] {0, 1, 2});
@@ -1662,19 +1710,25 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * This method cannot be called directly.
      */
     @Override
-    public void mouseClicked(MouseEvent e) { }
+    public void mouseClicked(MouseEvent e) {
+        // this body is intentionally left empty
+    }
 
     /**
      * This method cannot be called directly.
      */
     @Override
-    public void mouseEntered(MouseEvent e) { }
+    public void mouseEntered(MouseEvent e) {
+        // this body is intentionally left empty
+    }
 
     /**
      * This method cannot be called directly.
      */
     @Override
-    public void mouseExited(MouseEvent e) { }
+    public void mouseExited(MouseEvent e) {
+        // this body is intentionally left empty
+    }
 
     /**
      * This method cannot be called directly.

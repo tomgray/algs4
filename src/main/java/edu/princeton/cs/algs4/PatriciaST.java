@@ -36,7 +36,7 @@ package edu.princeton.cs.algs4;
  *  <em>associative array</em> abstraction: when associating a value with a key
  *  that is already in the symbol table, the convention is to replace the old
  *  value with the new value. Unlike {@link java.util.Map}, this class uses the
- *  convention that values cannot be {@code null}&mdash;setting the value
+ *  convention that values cannot be {@code null}—setting the value
  *  associated with a key to {@code null} is equivalent to deleting the key
  *  from the symbol table.
  *  <p>
@@ -133,11 +133,11 @@ public class PatriciaST<Value> {
      * from the symbol table.
      * @param key the key
      * @param val the value
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      * @throws IllegalArgumentException if {@code key} is the empty string.
      */
     public void put(String key, Value val) {
-        if (key == null) throw new NullPointerException("called put(null)");
+        if (key == null) throw new IllegalArgumentException("called put(null)");
         if (key.length() == 0) throw new IllegalArgumentException("invalid key");
         if (val == null) delete(key);
         Node p;
@@ -176,11 +176,11 @@ public class PatriciaST<Value> {
      * @param key the key
      * @return the value associated with the given key if the key is in the
      * symbol table and {@code null} if the key is not in the symbol table
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      * @throws IllegalArgumentException if {@code key} is the empty string.
      */
     public Value get(String key) {
-        if (key == null) throw new NullPointerException("called get(null)");
+        if (key == null) throw new IllegalArgumentException("called get(null)");
         if (key.length() == 0) throw new IllegalArgumentException("invalid key");
         Node p;
         Node x = head;
@@ -197,11 +197,11 @@ public class PatriciaST<Value> {
      * Removes a key and its associated value from the symbol table, if it
      * exists.
      * @param key the key
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      * @throws IllegalArgumentException if {@code key} is the empty string.
      */
     public void delete(String key) {
-        if (key == null) throw new NullPointerException("called delete(null)");
+        if (key == null) throw new IllegalArgumentException("called delete(null)");
         if (key.length() == 0) throw new IllegalArgumentException("invalid key");
         Node g;             // previous previous (grandparent)
         Node p = head;      // previous (parent)
@@ -249,7 +249,7 @@ public class PatriciaST<Value> {
      * @param key the key
      * @return {@code true} if this symbol table contains the given
      * {@code key} and {@code false} otherwise
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      * @throws IllegalArgumentException if {@code key} is the empty string.
      */
     public boolean contains(String key) {
@@ -278,7 +278,7 @@ public class PatriciaST<Value> {
      * To iterate over all of the keys in the symbol table named
      * {@code st}, use the foreach notation:
      * {@code for (Key key : st.keys())}.
-     * @return all keys in the sybol table as an {@code Iterable}
+     * @return all keys in the symbol table as an {@code Iterable}
      */
     public Iterable<String> keys() {
         Queue<String> queue = new Queue<String>();

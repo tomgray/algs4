@@ -68,6 +68,7 @@ public class Accumulator {
      * @return the sample variance of the data values
      */
     public double var() {
+        if (n <= 1) return Double.NaN;
         return sum / (n - 1);
     }
 
@@ -103,7 +104,7 @@ public class Accumulator {
             stats.addDataValue(x);
         }
 
-        StdOut.printf("N      = %d\n",   stats.count());
+        StdOut.printf("n      = %d\n",   stats.count());
         StdOut.printf("mean   = %.5f\n", stats.mean());
         StdOut.printf("stddev = %.5f\n", stats.stddev());
         StdOut.printf("var    = %.5f\n", stats.var());

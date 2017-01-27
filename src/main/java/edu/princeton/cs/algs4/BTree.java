@@ -24,7 +24,7 @@ package edu.princeton.cs.algs4;
  *  when associating a value with a key that is already in the symbol table,
  *  the convention is to replace the old value with the new value.
  *  Unlike {@link java.util.Map}, this class uses the convention that
- *  values cannot be {@code null}&mdash;setting the
+ *  values cannot be {@code null}—setting the
  *  value associated with a key to {@code null} is equivalent to deleting the key
  *  from the symbol table.
  *  <p>
@@ -67,7 +67,7 @@ public class BTree<Key extends Comparable<Key>, Value>  {
     // external nodes: only use key and value
     private static class Entry {
         private Comparable key;
-        private Object val;
+        private final Object val;
         private Node next;     // helper field to iterate over array entries
         public Entry(Comparable key, Object val, Node next) {
             this.key  = key;
@@ -115,10 +115,10 @@ public class BTree<Key extends Comparable<Key>, Value>  {
      * @param  key the key
      * @return the value associated with the given key if the key is in the symbol table
      *         and {@code null} if the key is not in the symbol table
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public Value get(Key key) {
-        if (key == null) throw new NullPointerException("key must not be null");
+        if (key == null) throw new IllegalArgumentException("argument to get() is null");
         return search(root, key, height);
     }
 
@@ -150,10 +150,10 @@ public class BTree<Key extends Comparable<Key>, Value>  {
      *
      * @param  key the key
      * @param  val the value
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void put(Key key, Value val) {
-        if (key == null) throw new NullPointerException("key must not be null");
+        if (key == null) throw new IllegalArgumentException("argument key to put() is null");
         Node u = insert(root, key, val, height); 
         n++;
         if (u == null) return;

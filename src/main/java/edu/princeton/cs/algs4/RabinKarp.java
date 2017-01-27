@@ -61,6 +61,8 @@ public class RabinKarp {
      * @param R the alphabet size
      */
     public RabinKarp(char[] pattern, int R) {
+        this.pat = String.valueOf(pattern);
+        this.R = R;        
         throw new UnsupportedOperationException("Operation not supported yet");
     }
 
@@ -99,9 +101,9 @@ public class RabinKarp {
     }
 
     // Monte Carlo version: always return true
-    private boolean check(int i) {
-        return true;
-    }
+    // private boolean check(int i) {
+    //    return true;
+    //}
  
     /**
      * Returns the index of the first occurrrence of the pattern string

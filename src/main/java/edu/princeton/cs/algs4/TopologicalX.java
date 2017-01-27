@@ -39,7 +39,7 @@ package edu.princeton.cs.algs4;
  */
 public class TopologicalX {
     private Queue<Integer> order;     // vertices in topological order
-    private int[] rank;               // rank[v] = order where vertex v appers in order
+    private int[] ranks;              // ranks[v] = order where vertex v appers in order
 
     /**
      * Determines whether the digraph {@code G} has a topological order and, if so,
@@ -55,7 +55,7 @@ public class TopologicalX {
         }
 
         // initialize 
-        rank = new int[G.V()]; 
+        ranks = new int[G.V()]; 
         order = new Queue<Integer>();
         int count = 0;
 
@@ -64,10 +64,10 @@ public class TopologicalX {
         for (int v = 0; v < G.V(); v++)
             if (indegree[v] == 0) queue.enqueue(v);
 
-        for (int j = 0; !queue.isEmpty(); j++) {
+        while (!queue.isEmpty()) {
             int v = queue.dequeue();
             order.enqueue(v);
-            rank[v] = count++;
+            ranks[v] = count++;
             for (int w : G.adj(v)) {
                 indegree[w]--;
                 if (indegree[w] == 0) queue.enqueue(w);
@@ -96,7 +96,7 @@ public class TopologicalX {
         }
 
         // initialize 
-        rank = new int[G.V()]; 
+        ranks = new int[G.V()]; 
         order = new Queue<Integer>();
         int count = 0;
 
@@ -105,10 +105,10 @@ public class TopologicalX {
         for (int v = 0; v < G.V(); v++)
             if (indegree[v] == 0) queue.enqueue(v);
 
-        for (int j = 0; !queue.isEmpty(); j++) {
+        while (!queue.isEmpty()) {
             int v = queue.dequeue();
             order.enqueue(v);
-            rank[v] = count++;
+            ranks[v] = count++;
             for (DirectedEdge e : G.adj(v)) {
                 int w = e.to();
                 indegree[w]--;
@@ -151,11 +151,11 @@ public class TopologicalX {
      * @param v vertex
      * @return the position of vertex {@code v} in a topological order
      *    of the digraph; -1 if the digraph is not a DAG
-     * @throws IndexOutOfBoundsException unless {@code 0 <= v < V}
+     * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
     public int rank(int v) {
         validateVertex(v);
-        if (hasOrder()) return rank[v];
+        if (hasOrder()) return ranks[v];
         else            return -1;
     }
 
@@ -246,11 +246,11 @@ public class TopologicalX {
         return true;
     }
 
-    // throw an IndexOutOfBoundsException unless {@code 0 <= v < V}
+    // throw an IllegalArgumentException unless {@code 0 <= v < V}
     private void validateVertex(int v) {
-        int V = rank.length;
+        int V = ranks.length;
         if (v < 0 || v >= V)
-            throw new IndexOutOfBoundsException("vertex " + v + " is not between 0 and " + (V-1));
+            throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V-1));
     }
 
     /**

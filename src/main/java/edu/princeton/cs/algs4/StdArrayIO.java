@@ -2,6 +2,9 @@
  *  Compilation:  javac StdArrayIO.java
  *  Execution:    java StdArrayIO < input.txt
  *  Dependencies: StdOut.java
+ *  Data files:    http://introcs.cs.princeton.edu/java/22library/tinyDouble1D.txt
+ *                 http://introcs.cs.princeton.edu/java/22library/tinyDouble2D.txt
+ *                 http://introcs.cs.princeton.edu/java/22library/tinyBoolean2D.txt
  *
  *  A library for reading in 1D and 2D arrays of integers, doubles,
  *  and booleans from standard input and printing them out to
@@ -53,7 +56,7 @@ package edu.princeton.cs.algs4;
  *  <p>
  *  For additional documentation, see
  *  <a href="http://introcs.cs.princeton.edu/22libary">Section 2.2</a> of
- *  <i>Introduction to Programming in Java: An Interdisciplinary Approach</i>
+ *  <i>Computer Science: An Interdisciplinary Approach</i>
  *  by Robert Sedgewick and Kevin Wayne.
  *
  *  @author Robert Sedgewick

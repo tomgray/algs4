@@ -39,7 +39,7 @@ import java.util.NoSuchElementException;
  *  when associating a value with a key that is already in the symbol table,
  *  the convention is to replace the old value with the new value.
  *  Unlike {@link java.util.Map}, this class uses the convention that
- *  values cannot be {@code null}&mdash;setting the
+ *  values cannot be {@code null}—setting the
  *  value associated with a key to {@code null} is equivalent to deleting the key
  *  from the symbol table.
  *  <p>
@@ -121,10 +121,10 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
      * @param  key the key
      * @return {@code true} if this symbol table contains {@code key} and
      *         {@code false} otherwise
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public boolean contains(Key key) {
-        if (key == null) throw new NullPointerException("argument to contains() is null");
+        if (key == null) throw new IllegalArgumentException("argument to contains() is null");
         return get(key) != null;
     }
 
@@ -134,10 +134,10 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
      * @param  key the key
      * @return the value associated with the given key if the key is in the symbol table
      *         and {@code null} if the key is not in the symbol table
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public Value get(Key key) {
-        if (key == null) throw new NullPointerException("argument to get() is null"); 
+        if (key == null) throw new IllegalArgumentException("argument to get() is null"); 
         if (isEmpty()) return null;
         int i = rank(key); 
         if (i < n && keys[i].compareTo(key) == 0) return vals[i];
@@ -149,10 +149,10 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
      *
      * @param  key the key
      * @return the number of keys in the symbol table strictly less than {@code key}
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public int rank(Key key) {
-        if (key == null) throw new NullPointerException("argument to rank() is null"); 
+        if (key == null) throw new IllegalArgumentException("argument to rank() is null"); 
 
         int lo = 0, hi = n-1; 
         while (lo <= hi) { 
@@ -167,15 +167,17 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
 
 
     /**
-     * Removes the specified key and its associated value from this symbol table
-     * (if the key is in this symbol table).
+     * Inserts the specified key-value pair into the symbol table, overwriting the old 
+     * value with the new value if the symbol table already contains the specified key.
+     * Deletes the specified key (and its associated value) from this symbol table
+     * if the specified value is {@code null}.
      *
      * @param  key the key
      * @param  val the value
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void put(Key key, Value val)  {
-        if (key == null) throw new NullPointerException("first argument to put() is null"); 
+        if (key == null) throw new IllegalArgumentException("first argument to put() is null"); 
 
         if (val == null) {
             delete(key);
@@ -209,10 +211,10 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
      * (if the key is in the symbol table).
      *
      * @param  key the key
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void delete(Key key) {
-        if (key == null) throw new NullPointerException("argument to delete() is null"); 
+        if (key == null) throw new IllegalArgumentException("argument to delete() is null"); 
         if (isEmpty()) return;
 
         // compute rank
@@ -289,9 +291,9 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
      * Return the kth smallest key in this symbol table.
      *
      * @param  k the order statistic
-     * @return the kth smallest key in this symbol table
+     * @return the {@code k}th smallest key in this symbol table
      * @throws IllegalArgumentException unless {@code k} is between 0 and
-     *        <em>n</em> &minus; 1
+     *        <em>n</em>–1
      */
     public Key select(int k) {
         if (k < 0 || k >= n) return null;
@@ -304,10 +306,10 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
      * @param  key the key
      * @return the largest key in this symbol table less than or equal to {@code key}
      * @throws NoSuchElementException if there is no such key
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public Key floor(Key key) {
-        if (key == null) throw new NullPointerException("argument to floor() is null"); 
+        if (key == null) throw new IllegalArgumentException("argument to floor() is null"); 
         int i = rank(key);
         if (i < n && key.compareTo(keys[i]) == 0) return keys[i];
         if (i == 0) return null;
@@ -320,10 +322,10 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
      * @param  key the key
      * @return the smallest key in this symbol table greater than or equal to {@code key}
      * @throws NoSuchElementException if there is no such key
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public Key ceiling(Key key) {
-        if (key == null) throw new NullPointerException("argument to ceiling() is null"); 
+        if (key == null) throw new IllegalArgumentException("argument to ceiling() is null"); 
         int i = rank(key);
         if (i == n) return null; 
         else return keys[i];
@@ -334,14 +336,14 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
      *
      * @param lo minimum endpoint
      * @param hi maximum endpoint
-     * @return the number of keys in this sybol table between {@code lo} 
-     *         (inclusive) and {@code hi} (exclusive)
-     * @throws NullPointerException if either {@code lo} or {@code hi}
+     * @return the number of keys in this symbol table between {@code lo} 
+     *         (inclusive) and {@code hi} (inclusive)
+     * @throws IllegalArgumentException if either {@code lo} or {@code hi}
      *         is {@code null}
      */
     public int size(Key lo, Key hi) {
-        if (lo == null) throw new NullPointerException("first argument to size() is null"); 
-        if (hi == null) throw new NullPointerException("second argument to size() is null"); 
+        if (lo == null) throw new IllegalArgumentException("first argument to size() is null"); 
+        if (hi == null) throw new IllegalArgumentException("second argument to size() is null"); 
 
         if (lo.compareTo(hi) > 0) return 0;
         if (contains(hi)) return rank(hi) - rank(lo) + 1;
@@ -366,13 +368,13 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
      * @param lo minimum endpoint
      * @param hi maximum endpoint
      * @return all keys in this symbol table between {@code lo} 
-     *         (inclusive) and {@code hi} (exclusive)
-     * @throws NullPointerException if either {@code lo} or {@code hi}
+     *         (inclusive) and {@code hi} (inclusive)
+     * @throws IllegalArgumentException if either {@code lo} or {@code hi}
      *         is {@code null}
      */
     public Iterable<Key> keys(Key lo, Key hi) {
-        if (lo == null) throw new NullPointerException("first argument to keys() is null"); 
-        if (hi == null) throw new NullPointerException("second argument to keys() is null"); 
+        if (lo == null) throw new IllegalArgumentException("first argument to keys() is null"); 
+        if (hi == null) throw new IllegalArgumentException("second argument to keys() is null"); 
 
         Queue<Key> queue = new Queue<Key>(); 
         if (lo.compareTo(hi) > 0) return queue;

@@ -74,7 +74,7 @@ public class DepthFirstOrder {
         for (int v = 0; v < G.V(); v++)
             if (!marked[v]) dfs(G, v);
 
-        assert check(G);
+        assert check();
     }
 
     /**
@@ -122,19 +122,23 @@ public class DepthFirstOrder {
 
     /**
      * Returns the preorder number of vertex {@code v}.
-     * @param v the vertex
+     * @param  v the vertex
      * @return the preorder number of vertex {@code v}
+     * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
     public int pre(int v) {
+        validateVertex(v);
         return pre[v];
     }
 
     /**
      * Returns the postorder number of vertex {@code v}.
-     * @param v the vertex
+     * @param  v the vertex
      * @return the postorder number of vertex {@code v}
+     * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
     public int post(int v) {
+        validateVertex(v);
         return post[v];
     }
 
@@ -167,7 +171,7 @@ public class DepthFirstOrder {
 
 
     // check that pre() and post() are consistent with pre(v) and post(v)
-    private boolean check(Digraph G) {
+    private boolean check() {
 
         // check that post(v) is consistent with post()
         int r = 0;
@@ -189,8 +193,14 @@ public class DepthFirstOrder {
             r++;
         }
 
-
         return true;
+    }
+
+    // throw an IllegalArgumentException unless {@code 0 <= v < V}
+    private void validateVertex(int v) {
+        int V = marked.length;
+        if (v < 0 || v >= V)
+            throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V-1));
     }
 
     /**
